@@ -7,6 +7,7 @@ import sys
 from decimal import Decimal, getcontext
 import warnings
 warnings.simplefilter("ignore")
+getcontext().prec = 3
 
 Shrinkages = {"ACh1":[0.2, 0.4, 0.7, 0.9, 2.15, 4.4, 8.75, 11.2, 11.4, 11.4],
              "ACh2":[0, 0, 0, 0.8, 4.3, 8.9, 11.6, 12.2, 12.8, 12.8],
@@ -80,23 +81,29 @@ def graph_with_curve(key,img_name,output_path="/Users/kotaro/Desktop/",title="")
                        "b":b,
                        "c":c,
                        "EC50":EC50}
-        plt.plot(Concs[key], Shrinkages[key], label=labels[key])
-        plt.plot(x, a + (b - a) / (1 + (EC50 / x) ** c), label="近似曲線")
-        graph_processing(img_name, output_path,title)
     except RuntimeError:
         x = np.linspace(min(Concs[key]), max(Concs[key]), 100000)
         popt_temp, _ = curve_fit(lambda x, c, EC50: min(Shrinkages[key]) + (max(Shrinkages[key]) - min(Shrinkages[key])) / (1 + (EC50 / x) ** c), Concs[key], Shrinkages[key])
-        c,EC50 = popt_temp
-        temp_params = {"c":c,
+        c, EC50 = popt_temp
+        temp_params = {"a":min(Shrinkages[key]),
+                       "b":max(Shrinkages[key]),
+                       "c":c,
                        "EC50":EC50}
-        plt.plot(x, min(Shrinkages[key]) + (max(Shrinkages[key]) - min(Shrinkages[key])) / (1 + (EC50 / x) ** c), label="近似曲線")
-        plt.plot(Concs[key], Shrinkages[key], label=labels[key])
-        graph_processing(img_name, output_path,title)
     finally:
-        print(labels[key]+"の最適化パラメータ: ")
-        getcontext().prec = 3
+        plt.plot(x, temp_params["a"] + (temp_params["b"] - temp_params["a"]) / (1 + (temp_params["EC50"] / x) ** temp_params["c"]), label="近似曲線")
         for param in temp_params:
             temp_params[param] = Decimal(temp_params[param])
+        if temp_params["a"] > 0:
+            latex_formula = r'$y = {a} + \frac{{({b} - {a})}}{{1 + \left(\frac{{{EC50}}}{{x}} \right)^{{{c}}}}}$'.format(
+                a=+temp_params["a"], b=+temp_params["b"], c=+temp_params["c"], EC50=+temp_params["EC50"])
+        else:
+            latex_formula = r'$y = - {a} + \frac{{({b} + {a})}}{{1 + \left(\frac{{{EC50}}}{{x}} \right)^{{{c}}}}}$'.format(
+                a = Decimal(0)-temp_params["a"], b=+temp_params["b"], c=+temp_params["c"], EC50=+temp_params["EC50"])
+        plt.text(10**-9,max(Shrinkages[key])*0.6, latex_formula)
+        plt.plot(Concs[key], Shrinkages[key], label=labels[key])
+        graph_processing(img_name, output_path,title=" ("+labels[key]+")")
+        print(labels[key]+"の最適化パラメータ: ")
+        for param in temp_params:
             print("\t{} = {}".format(param,+temp_params[param]))
         return None
 
