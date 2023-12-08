@@ -123,8 +123,8 @@ def graph_with_curve(key, img_name, output_path="/Users/kotaro/Desktop/", title=
             latex_formula = r'$y = {a} + \frac{{({b} - {a})}}{{1 + \left(\frac{{{EC50}}}{{x}} \right)^{{{c}}}}}$'.format(
                 a=+temp_params["a"], b=+temp_params["b"], c=+temp_params["c"], EC50=+temp_params["EC50"])
         else:
-            latex_formula = r'$y = - {a} + \frac{{({b} + {a})}}{{1 + \left(\frac{{{EC50}}}{{x}} \right)^{{{c}}}}}$'.format(
-                a=Decimal(0) - temp_params["a"], b=+temp_params["b"], c=+temp_params["c"], EC50=+temp_params["EC50"])
+            latex_formula = r'$y = {a} + \frac{{({b} - ({a}))}}{{1 + \left(\frac{{{EC50}}}{{x}} \right)^{{{c}}}}}$'.format(
+                a=+temp_params["a"], b=+temp_params["b"], c=+temp_params["c"], EC50=+temp_params["EC50"])
         if max(Shrinkages[key]) > 80:
             plt.text(EC50*0.3, 50, latex_formula, horizontalalignment="right")
         else:
@@ -137,9 +137,9 @@ def graph_with_curve(key, img_name, output_path="/Users/kotaro/Desktop/", title=
         return None
 
 def main():
-    graph_by_list(samples, "yakusaku")
+    graph_by_list(samples, "yakusaku", output_path="")
     for key in samples:
-        graph_with_curve(key, "yakusaku " + key)
+        graph_with_curve(key, "yakusaku " + key, output_path="")
 
 
 if __name__ == '__main__':
