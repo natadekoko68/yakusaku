@@ -122,6 +122,9 @@ def graph_with_curve(key, img_name, output_path="/Users/kotaro/Desktop/", title=
         if min(Shrinkages[key]) > 0:
             latex_formula = r'$y = {a} + \frac{{({b} - {a})}}{{1 + \left(\frac{{{EC50}}}{{x}} \right)^{{{c}}}}}$'.format(
                 a=+temp_params["a"], b=+temp_params["b"], c=+temp_params["c"], EC50=+temp_params["EC50"])
+        elif min(Shrinkages[key]) == 0:
+            latex_formula = r'$y = {a} + \frac{{({b} - {a})}}{{1 + \left(\frac{{{EC50}}}{{x}} \right)^{{{c}}}}}$'.format(
+                a=+temp_params["a"], b=+temp_params["b"], c=+temp_params["c"], EC50=+temp_params["EC50"])
         else:
             latex_formula = r'$y = {a} + \frac{{({b} - ({a}))}}{{1 + \left(\frac{{{EC50}}}{{x}} \right)^{{{c}}}}}$'.format(
                 a=+temp_params["a"], b=+temp_params["b"], c=+temp_params["c"], EC50=+temp_params["EC50"])
