@@ -137,7 +137,7 @@ def graph_with_curve(key, img_name, output_path="/Users/kotaro/Desktop/", title=
         return None
 
 def main():
-    graph_by_list(samples, "yakusaku", output_path="/Users/kotaro/Desktop/")
+    graph_by_list(samples, "yakusaku")
     for key in samples:
         graph_with_curve(key, "yakusaku " + key)
 
