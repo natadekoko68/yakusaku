@@ -127,9 +127,9 @@ def graph_with_curve(key, img_name, output_path="/Users/kotaro/Desktop/", title=
     return None
 
 def main():
-    graph_by_list(samples, "yakusaku", output_path="")
+    graph_by_list(samples, "yakusaku_main2", output_path="")
     for key in samples:
-        graph_with_curve(key, "yakusaku " + key, output_path="")
+        graph_with_curve(key, "yakusaku_main2 " + key, output_path="")
 
 
 if __name__ == '__main__':
