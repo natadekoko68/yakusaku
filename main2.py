@@ -9,7 +9,7 @@ import warnings
 warnings.simplefilter("ignore")
 getcontext().prec = 3
 
-""" output
+"""
 ACh 1回目の最適化パラメータ: 
 	a = 3.79
 	b = 91.0
@@ -97,8 +97,9 @@ def graph_by_list(lst, img_name, output_path="/Users/kotaro/Desktop/", title="")
 def graph_with_curve(key, img_name, output_path="/Users/kotaro/Desktop/", title=""):
     x = np.logspace(np.log10(min(Concs[key])), np.log10(max(Concs[key])), 100)
     try:
-        popt_temp, _ = curve_fit(lambda x, a, b, c, EC50: a + (b - a) / (1 + (EC50 / x) ** c), Concs[key],
-                                 Shrinkages[key])
+        popt_temp, _ = curve_fit(
+            lambda x, c, EC50: min(Shrinkages[key]) + (max(Shrinkages[key]) - min(Shrinkages[key])) / (
+                        1 + (EC50 / x) ** c), Concs[key], Shrinkages[key])
         a, b, c, EC50 = popt_temp
         temp_params = {"a": a,
                        "b": b,
