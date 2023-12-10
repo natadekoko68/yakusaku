@@ -78,7 +78,7 @@ for key in Shrinkages:
 # graph
 def graph_processing(img_name, output_path, title):
     plt.title("用量作用曲線" + title)
-    plt.xlabel("Bath内最終濃度(M)")
+    plt.xlabel("Bath内ACh最終濃度(M)")
     plt.xscale("log")
     plt.ylabel("収縮率($\%$)")
     plt.legend()
