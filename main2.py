@@ -11,30 +11,26 @@ getcontext().prec = 3
 
 """
 ACh 1回目の最適化パラメータ: 
-	a = 3.79
-	b = 91.0
-	c = 1.32
-	EC50 = 4.47E-7
+	a = 1.56
+	b = 89.1
+	c = 1.30
+	EC50 = 4.00E-7
 ACh 2回目の最適化パラメータ: 
 	a = 0
 	b = 100
 	c = 1.39
 	EC50 = 1.69E-7
 Atropine(low)+Achの最適化パラメータ: 
-	a = -0.356
-	b = 104
+	a = 0
+	b = 105
 	c = 1.56
-	EC50 = 0.00000479
+	EC50 = 0.00000487
 Atropine(high)+Achの最適化パラメータ: 
-	a = -0.0538
-	b = 99.4
-	c = 2.90
-	EC50 = 0.0000617
-Papaverine+Achの最適化パラメータ: 
-	a = 10.4
-	b = 15.8
-	c = 13.9
-	EC50 = 0.00000945
+	a = 0
+	b = 98.4
+	c = 2.95
+	EC50 = 0.0000610
+Pap Could not be fitted.
 """
 
 #input
@@ -100,41 +96,35 @@ def graph_with_curve(key, img_name, output_path="/Users/kotaro/Desktop/", title=
         popt_temp, _ = curve_fit(
             lambda x, c, EC50: min(Shrinkages[key]) + (max(Shrinkages[key]) - min(Shrinkages[key])) / (
                         1 + (EC50 / x) ** c), Concs[key], Shrinkages[key])
-        a, b, c, EC50 = popt_temp
-        temp_params = {"a": a,
-                       "b": b,
-                       "c": c,
-                       "EC50": EC50}
     except RuntimeError:
-        popt_temp, _ = curve_fit(
-            lambda x, c, EC50: min(Shrinkages[key]) + (max(Shrinkages[key]) - min(Shrinkages[key])) / (
-                        1 + (EC50 / x) ** c), Concs[key], Shrinkages[key])
-        c, EC50 = popt_temp
-        temp_params = {"a": min(Shrinkages[key]),
-                       "b": max(Shrinkages[key]),
-                       "c": c,
-                       "EC50": EC50}
-    finally:
-        plt.plot(x, temp_params["a"] + (temp_params["b"] - temp_params["a"]) / (
-                    1 + (temp_params["EC50"] / x) ** temp_params["c"]), label="近似曲線")
-        for param in temp_params:
-            temp_params[param] = Decimal(temp_params[param])
-        if min(Shrinkages[key]) > 0:
-            latex_formula = r'$y = {a} + \frac{{({b} - {a})}}{{1 + \left(\frac{{{EC50}}}{{x}} \right)^{{{c}}}}}$'.format(
-                a=+temp_params["a"], b=+temp_params["b"], c=+temp_params["c"], EC50=+temp_params["EC50"])
-        else:
-            latex_formula = r'$y = {a} + \frac{{({b} - ({a}))}}{{1 + \left(\frac{{{EC50}}}{{x}} \right)^{{{c}}}}}$'.format(
-                a=+temp_params["a"], b=+temp_params["b"], c=+temp_params["c"], EC50=+temp_params["EC50"])
-        if max(Shrinkages[key]) > 80:
-            plt.text(EC50*0.3, 50, latex_formula, horizontalalignment="right")
-        else:
-            plt.text(10**-9, max(Shrinkages[key])*0.7, latex_formula, horizontalalignment="left")
-        plt.plot(Concs[key], Shrinkages[key], label=labels[key])
-        graph_processing(img_name, output_path, title=" (" + labels[key] + ")")
-        print(labels[key] + "の最適化パラメータ: ")
-        for param in temp_params:
-            print("\t{} = {}".format(param, +temp_params[param]))
+        print(key,"Could not be fitted.")
         return None
+    c, EC50 = popt_temp
+    temp_params = {"a": min(Shrinkages[key]),
+                   "b": max(Shrinkages[key]),
+                   "c": c,
+                   "EC50": EC50}
+
+    plt.plot(x, temp_params["a"] + (temp_params["b"] - temp_params["a"]) / (
+                1 + (temp_params["EC50"] / x) ** temp_params["c"]), label="近似曲線")
+    for param in temp_params:
+        temp_params[param] = Decimal(temp_params[param])
+    if min(Shrinkages[key]) > 0:
+        latex_formula = r'$y = {a} + \frac{{({b} - {a})}}{{1 + \left(\frac{{{EC50}}}{{x}} \right)^{{{c}}}}}$'.format(
+            a=+temp_params["a"], b=+temp_params["b"], c=+temp_params["c"], EC50=+temp_params["EC50"])
+    else:
+        latex_formula = r'$y = {a} + \frac{{({b} - ({a}))}}{{1 + \left(\frac{{{EC50}}}{{x}} \right)^{{{c}}}}}$'.format(
+            a=+temp_params["a"], b=+temp_params["b"], c=+temp_params["c"], EC50=+temp_params["EC50"])
+    if max(Shrinkages[key]) > 80:
+        plt.text(EC50*0.3, 50, latex_formula, horizontalalignment="right")
+    else:
+        plt.text(10**-9, max(Shrinkages[key])*0.7, latex_formula, horizontalalignment="left")
+    plt.plot(Concs[key], Shrinkages[key], label=labels[key])
+    graph_processing(img_name, output_path, title=" (" + labels[key] + ")")
+    print(labels[key] + "の最適化パラメータ: ")
+    for param in temp_params:
+        print("\t{} = {}".format(param, +temp_params[param]))
+    return None
 
 def main():
     graph_by_list(samples, "yakusaku", output_path="")
