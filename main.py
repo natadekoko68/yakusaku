@@ -98,14 +98,14 @@ def graph_with_curve(key, img_name, output_path="/Users/kotaro/Desktop/", title=
     try:
         popt_temp, _ = curve_fit(lambda x, a, b, c, EC50: a + (b - a) / (1 + (EC50 / x) ** c), Concs[key],
                                  Shrinkages[key])
-        x = np.linspace(min(Concs[key]), max(Concs[key]), 100000)
+        x = np.linspace(min(Concs[key]), max(Concs[key]), 10000)
         a, b, c, EC50 = popt_temp
         temp_params = {"a": a,
                        "b": b,
                        "c": c,
                        "EC50": EC50}
     except RuntimeError:
-        x = np.linspace(min(Concs[key]), max(Concs[key]), 100000)
+        x = np.linspace(min(Concs[key]), max(Concs[key]), 10000)
         popt_temp, _ = curve_fit(
             lambda x, c, EC50: min(Shrinkages[key]) + (max(Shrinkages[key]) - min(Shrinkages[key])) / (
                         1 + (EC50 / x) ** c), Concs[key], Shrinkages[key])
